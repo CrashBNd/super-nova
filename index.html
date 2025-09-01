@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPERNOVA ORIGENES</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Orbitron -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Efecto de brillo en el texto */
+        .text-glow-purple {
+            text-shadow: 0 0 10px #8B5CF6, 0 0 20px #8B5CF6, 0 0 30px #8B5CF6;
+        }
+
+        /* Animación de entrada por defecto */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        
+        /* Clase para activar la animación */
+        .animate-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animación de entrada más lenta */
+        .animate-in-delay-1 { transition-delay: 0.2s; }
+        .animate-in-delay-2 { transition-delay: 0.4s; }
+        .animate-in-delay-3 { transition-delay: 0.6s; }
+        
+        /* Estilos personalizados para el fondo del héroe */
+        .hero-bg {
+            background-image: url('img/hero.gif');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Estilo para el fondo del héroe con el overlay */
+        .hero-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        /* Animación de pulso para el botón */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.8); }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+        
+        /* Estilos para el nuevo layout del Hero */
+        .hero-fighters-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-center-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-fighter-card {
+            cursor: pointer;
+            width: 150px; /* Tamaño del círculo del peleador */
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #8B5CF6;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            overflow: hidden;
+            position: absolute;
+        }
+
+        .hero-fighter-card:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #8B5CF6;
+            z-index: 20; /* Asegura que la tarjeta activa esté encima */
+        }
+        
+        .hero-fighter-card img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Posicionamiento de cada peleador */
+        .fighter-1 { top: 10%; left: 15%; transform: rotate(-10deg); }
+        .fighter-2 { top: 10%; right: 15%; transform: rotate(10deg); }
+        .fighter-3 { top: 35%; left: 0%; transform: rotate(-20deg); }
+        .fighter-4 { top: 35%; right: 0%; transform: rotate(20deg); }
+        .fighter-5 { bottom: 10%; left: 15%; transform: rotate(10deg); }
+        .fighter-6 { bottom: 10%; right: 15%; transform: rotate(-10deg); }
+
+        /* Estilo para el nombre del peleador */
+        .fighter-name-display {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-shadow: 0 0 5px black;
+        }
+
+        .fighter-name-display.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive para dispositivos móviles */
+        @media (max-width: 768px) {
+            .hero-fighter-card {
+                width: 100px;
+                height: 100px;
+            }
+            .fighter-1 { top: 5%; left: 5%; }
+            .fighter-2 { top: 5%; right: 5%; }
+            .fighter-3 { top: 25%; left: 0%; }
+            .fighter-4 { top: 25%; right: 0%; }
+            .fighter-5 { bottom: 5%; left: 5%; }
+            .fighter-6 { bottom: 5%; right: 5%; }
+            .hero-center-content {
+                width: 200px;
+                height: 200px;
+            }
+        }
+        
+        /* Estilos para el efecto de hover en las tarjetas de peleadores de la cartelera */
+        .fighter-card .fighter-image-1,
+        .fighter-card .fighter-image-2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .fighter-card .fighter-image-1 {
+            transform: translateX(0);
+        }
+
+        .fighter-card .fighter-image-2 {
+            transform: translateX(100%);
+        }
+
+        .fighter-card:hover .fighter-image-1 {
+            transform: translateX(-100%);
+        }
+
+        .fighter-card:hover .fighter-image-2 {
+            transform: translateX(0);
+        }
+
+        /* Estilos para la sección de pronósticos */
+        .forecast-card {
+            background-color: #1a1a1a;
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        /* Estilos para el overlay de "Votación Finalizada" */
+        .voting-closed-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .forecast-card.voting-closed .voting-closed-overlay {
+            display: flex;
+        }
+        
+        /* Estilos para los porcentajes visibles */
+        .percentage-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .forecast-bar {
+            height: 1.5rem;
+            display: flex;
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+        
+        .bar-left {
+            background-color: #ec4899; /* Pink */
+            transition: width 0.5s ease;
+        }
+
+        .bar-right {
+            background-color: #0ea5e9; /* Sky Blue */
+            transition: width 0.5s ease;
+        }
+        
+        .forecast-fighter-images {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-top: 1rem;
+        }
+
+        .forecast-fighter-images img {
+            width: 45%;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+            border-radius: 0.5rem;
+        }
+
+        .forecast-fighter-images img.left {
+            transform: translateX(10%);
+        }
+
+        .forecast-fighter-images img.right {
+            transform: translateX(-10%);
+        }
+
+        .forecast-fighter-images img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Estilos para los nombres de los peleadores en Pronósticos */
+        .forecast-fighter-names {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .forecast-fighter-names .fighter-name {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        
+        .forecast-fighter-names .fighter-name:hover {
+            transform: translateY(-5px);
+            opacity: 0.8;
+        }
+
+        /* Estilos para los modales */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease-in-out;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #8B5CF6;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <!-- Navbar flotante -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-black text-purple-400">SUPERNOVA</a>
+            <ul class="flex space-x-6 text-lg font-bold">
+                <li><a href="#inicio" class="hover:text-purple-400 transition-colors">Inicio</a></li>
+                <li><a href="#peleas" class="hover:text-purple-400 transition-colors">Peleas</a></li>
+                <li><a href="#artistas" class="hover:text-purple-400 transition-colors">Artistas</a></li>
+                <li><a href="#boletos" class="hover:text-purple-400 transition-colors">Boletos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sección de Héroe (Pantalla completa) -->
+    <section id="inicio" class="relative hero-bg h-screen flex items-center justify-center text-center">
+        <div class="absolute inset-0 hero-overlay"></div>
+        
+        <div class="relative z-10 w-full h-full flex items-center justify-center">
+            
+            <div id="hero-display" class="relative z-20 w-80 h-80 lg:w-96 lg:h-96 rounded-full flex items-center justify-center transition-opacity duration-500 hero-center-content">
+                <!-- Contenido central, inicialmente el logo. Se hace invisible al pasar el mouse por un peleador. -->
+                <img id="logo-hero" src="img/logo.png" alt="Logo SUPERNOVA" class="w-full h-full object-contain">
+                <!-- Imagen del peleador a tamaño completo. Inicialmente oculta. -->
+                <img id="fighter-hero" src="" alt="Fighter Full View" class="absolute w-full h-full object-contain opacity-0 transition-opacity duration-500">
+                <!-- Nombre del peleador, inicialmente oculta. -->
+                <div id="fighter-name-display" class="fighter-name-display"></div>
+            </div>
+
+            <!-- Contenedor para los peleadores que rodean al logo (imágenes locales) -->
+            <div class="absolute inset-0 hero-fighters-container">
+                <!-- Pelea 1 -->
+                <div class="hero-fighter-card fighter-1" data-fighter-image="img/francoescamilla.png" data-fighter-name="FRANCO ESCAMILLA">
+                    <img src="img/francoescamilla.png" alt="Franco Escamilla">
+                </div>
+                <!-- Pelea 2 -->
+                <div class="hero-fighter-card fighter-2" data-fighter-image="img/escorpiondorado.png" data-fighter-name="ESCORPIÓN DORADO">
+                    <img src="img/escorpiondorado.png" alt="Escorpión Dorado">
+                </div>
+                <!-- Pelea 3 -->
+                <div class="hero-fighter-card fighter-3" data-fighter-image="img/galamontes.png" data-fighter-name="GALA MONTES">
+                    <img src="img/galamontes.png" alt="Gala Montes">
+                </div>
+                <!-- Pelea 4 -->
+                <div class="hero-fighter-card fighter-4" data-fighter-image="img/alana.png" data-fighter-name="ALANA FLORES">
+                    <img src="img/alana.png" alt="Alana Flores">
+                </div>
+                <!-- Pelea 5 -->
+                <div class="hero-fighter-card fighter-5" data-fighter-image="img/mariobaoutizta.png" data-fighter-name="MARIO BAUTISTA">
+                    <img src="img/mariobaoutizta.png" alt="Mario Bautista">
+                </div>
+                <!-- Pelea 6 -->
+                <div class="hero-fighter-card fighter-6" data-fighter-image="img/wescoal.png" data-fighter-name="WESCOAL">
+                    <img src="img/wescoal.png" alt="WesCoal">
+                </div>
+            </div>
+
+            <!-- Contenido adicional en la parte inferior del Hero -->
+            <div class="absolute bottom-10 left-0 w-full text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-8 text-white text-glow-purple animate-in animate-in-delay-1">
+                    ORIGENES
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de peleas (con animaciones de entrada) -->
+    <section id="peleas" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <h2 class="text-5xl md:text-6xl font-bold text-center mb-16 text-glow-purple animate-in">
+                CARTELERA
+            </h2>
+            <!-- Nueva sección: Galería de peleadores -->
+          
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <!-- CARTELERA generada: cada tarjeta empareja dos imágenes del directorio img/ -->
+                <!-- 1: Alana vs Gala -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-1">
+                    <div class="relative w-full h-80 bg-gray-800 rounded-xl overflow-hidden cursor-pointer fighter-card">
+                        <img src="img/alana.png" alt="Alana Flores" class="fighter-image-1">
+                        <img src="img/galamontes.png" alt="Gala Montes" class="fighter-image-2">
+                    </div>
+                    <h3 class="mt-6 text-3xl font-bold">ALANA FLORES VS. GALA MONTES</h3>
+                    <p class="text-lg text-gray-400">Combate 1</p>
+                </div>
+
+                <!-- 2: Franco vs Escorpión -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-2">
+                    <div class="relative w-full h-80 bg-gray-800 rounded-xl overflow-hidden cursor-pointer fighter-card">
+                        <img src="img/francoescamilla.png" alt="Franco Escamilla" class="fighter-image-1">
+                        <img src="img/escorpiondorado.png" alt="Escorpión Dorado" class="fighter-image-2">
+                    </div>
+                    <h3 class="mt-6 text-3xl font-bold">FRANCO ESCAMILLA VS. ESCORPIÓN DORADO</h3>
+                    <p class="text-lg text-gray-400">Combate 2</p>
+                </div>
+
+                <!-- 3: WesCoal vs Mario Bautista -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-3">
+                    <div class="relative w-full h-80 bg-gray-800 rounded-xl overflow-hidden cursor-pointer fighter-card">
+                        <img src="img/wescoal.png" alt="WesCoal" class="fighter-image-1">
+                        <img src="img/mariobaoutizta.png" alt="Mario Bautista" class="fighter-image-2">
+                    </div>
+                    <h3 class="mt-6 text-3xl font-bold">WESCOAL VS. MARIO BAUTISTA</h3>
+                    <p class="text-lg text-gray-400">Combate 3</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de pronósticos de la comunidad -->
+    <section id="pronosticos" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-5xl md:text-6xl font-bold text-center mb-16 text-glow-purple animate-in">
+                PRONÓSTICOS
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Pronóstico: Alana Flores vs Gala Montes -->
+                <div class="forecast-card animate-in animate-in-delay-1" data-match-id="match1" data-voting-deadline="2025-08-25T12:00:00Z">
+                    <div class="flex flex-col items-center text-center text-2xl font-bold mb-2">
+                        <span class="fighter-name" data-fighter="fighter1">ALANA FLORES</span>
+                        <span class="text-purple-400 text-lg">VS</span>
+                        <span class="fighter-name" data-fighter="fighter2">GALA MONTES</span>
+                    </div>
+                    <div class="percentage-display">
+                        <span class="text-pink-400 percent-left">0%</span>
+                        <span class="text-sky-400 percent-right">0%</span>
+                    </div>
+                    <div class="forecast-bar">
+                        <div class="bar-left" style="width: 0%;"></div>
+                        <div class="bar-right" style="width: 0%;"></div>
+                    </div>
+                    <div class="forecast-fighter-images relative">
+                        <img src="img/alana.png" alt="Alana Flores" class="left">
+                        <img src="img/galamontes.png" alt="Gala Montes" class="right">
+                    </div>
+                    <p class="text-sm text-gray-400 text-center mt-4">BASADO EN <span class="total-votes">0</span> VOTACIONES DE USUARIOS</p>
+                    <div class="voting-closed-overlay text-white font-bold text-3xl">Votación Finalizada</div>
+                </div>
+
+                <!-- Pronóstico: Westcol vs Mario Bautista -->
+                <div class="forecast-card animate-in animate-in-delay-2" data-match-id="match2" data-voting-deadline="2025-08-25T12:00:00Z">
+                    <div class="flex flex-col items-center text-center text-2xl font-bold mb-2">
+                        <span class="fighter-name" data-fighter="fighter1">WESTCOL</span>
+                        <span class="text-purple-400 text-lg">VS</span>
+                        <span class="fighter-name" data-fighter="fighter2">MARIO BAUTISTA</span>
+                    </div>
+                    <div class="percentage-display">
+                        <span class="text-pink-400 percent-left">0%</span>
+                        <span class="text-sky-400 percent-right">0%</span>
+                    </div>
+                    <div class="forecast-bar">
+                        <div class="bar-left" style="width: 0%;"></div>
+                        <div class="bar-right" style="width: 0%;"></div>
+                    </div>
+                    <div class="forecast-fighter-images relative">
+                        <img src="img/wescoal.png" alt="Westcol" class="left">
+                        <img src="img/mariobaoutizta.png" alt="Mario Bautista" class="right">
+                    </div>
+                    <p class="text-sm text-gray-400 text-center mt-4">BASADO EN <span class="total-votes">0</span> VOTACIONES DE USUARIOS</p>
+                    <div class="voting-closed-overlay text-white font-bold text-3xl">Votación Finalizada</div>
+                </div>
+
+                <!-- Pronóstico: Franco Escamilla vs Escorpión Dorado -->
+                <div class="forecast-card animate-in animate-in-delay-3" data-match-id="match3" data-voting-deadline="2025-08-25T12:00:00Z">
+                    <div class="flex flex-col items-center text-center text-2xl font-bold mb-2">
+                        <span class="fighter-name" data-fighter="fighter1">FRANCO ESCAMILLA</span>
+                        <span class="text-purple-400 text-lg">VS</span>
+                        <span class="fighter-name" data-fighter="fighter2">ESCORPIÓN DORADO</span>
+                    </div>
+                    <div class="percentage-display">
+                        <span class="text-pink-400 percent-left">0%</span>
+                        <span class="text-sky-400 percent-right">0%</span>
+                    </div>
+                    <div class="forecast-bar">
+                        <div class="bar-left" style="width: 0%;"></div>
+                        <div class="bar-right" style="width: 0%;"></div>
+                    </div>
+                    <div class="forecast-fighter-images relative">
+                        <img src="img/francoescamilla.png" alt="Franco Escamilla" class="left">
+                        <img src="img/escorpiondorado.png" alt="Escorpión Dorado" class="right">
+                    </div>
+                    <p class="text-sm text-gray-400 text-center mt-4">BASADO EN <span class="total-votes">0</span> VOTACIONES DE USUARIOS</p>
+                    <div class="voting-closed-overlay text-white font-bold text-3xl">Votación Finalizada</div>
+                </div>
+
+                <!-- Pronóstico: Luis Pride vs Shelao (placeholders locales) -->
+                <div class="forecast-card animate-in animate-in-delay-4" data-match-id="match4" data-voting-deadline="2025-08-25T12:00:00Z">
+                    <div class="flex flex-col items-center text-center text-2xl font-bold mb-2">
+                        <span class="fighter-name" data-fighter="fighter1">LUIS PRIDE</span>
+                        <span class="text-purple-400 text-lg">VS</span>
+                        <span class="fighter-name" data-fighter="fighter2">SHELAO</span>
+                    </div>
+                    <div class="percentage-display">
+                        <span class="text-pink-400 percent-left">0%</span>
+                        <span class="text-sky-400 percent-right">0%</span>
+                    </div>
+                    <div class="forecast-bar">
+                        <div class="bar-left" style="width: 0%;"></div>
+                        <div class="bar-right" style="width: 0%;"></div>
+                    </div>
+                    <div class="forecast-fighter-images relative">
+                        <img src="img/imgi_19_534373586_17883884799358253_3363487802801352017_n.jpg" alt="Luis Pride (placeholder)" class="left">
+                        <img src="img/imgi_23_533482943_17883892947358253_3297968664939966653_n.jpg" alt="Shelao (placeholder)" class="right">
+                    </div>
+                    <p class="text-sm text-gray-400 text-center mt-4">BASADO EN <span class="total-votes">0</span> VOTACIONES DE USUARIOS</p>
+                    <div class="voting-closed-overlay text-white font-bold text-3xl">Votación Finalizada</div>
+                </div>
+
+                <!-- Pronóstico: Mercedes Roa vs Milica (placeholders locales) -->
+                <div class="forecast-card animate-in animate-in-delay-5" data-match-id="match5" data-voting-deadline="2025-08-25T12:00:00Z">
+                    <div class="flex flex-col items-center text-center text-2xl font-bold mb-2">
+                        <span class="fighter-name" data-fighter="fighter1">MERCEDES ROA</span>
+                        <span class="text-purple-400 text-lg">VS</span>
+                        <span class="fighter-name" data-fighter="fighter2">MILICA</span>
+                    </div>
+                    <div class="percentage-display">
+                        <span class="text-pink-400 percent-left">0%</span>
+                        <span class="text-sky-400 percent-right">0%</span>
+                    </div>
+                    <div class="forecast-bar">
+                        <div class="bar-left" style="width: 0%;"></div>
+                        <div class="bar-right" style="width: 0%;"></div>
+                    </div>
+                    <div class="forecast-fighter-images relative">
+                        <img src="img/images.jfif" alt="Mercedes Roa (placeholder)" class="left">
+                        <img src="img/images (1).jfif" alt="Milica (placeholder)" class="right">
+                    </div>
+                    <p class="text-sm text-gray-400 text-center mt-4">BASADO EN <span class="total-votes">0</span> VOTACIONES DE USUARIOS</p>
+                    <div class="voting-closed-overlay text-white font-bold text-3xl">Votación Finalizada</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de artistas (con animaciones de entrada) -->
+    <section id="artistas" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <h2 class="text-5xl md:text-6xl font-bold text-center mb-16 text-glow-purple animate-in">
+                ARTISTAS
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <!-- Christian Nodal -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-1">
+                    <img src="img/christiannodal.jpg" alt="Christian Nodal" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Christian Nodal</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- María Becerra -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-2">
+                    <img src="img/mariabecerra.jpg" alt="María Becerra" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">María Becerra</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- Alemán -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-3">
+                    <img src="img/aleman.webp" alt="Alemán" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Alemán</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- Xavi -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-4">
+                    <img src="img/xavi.jpg" alt="Xavi" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Xavi</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- Gabito Ballesteros -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-1">
+                    <img src="img/gabitoballesteros.jpg" alt="Gabito Ballesteros" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Gabito Ballesteros</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- Óscar Maydón -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-2">
+                    <img src="img/oscar.jpg" alt="Óscar Maydón" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Óscar Maydón</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+
+                <!-- Alan Arrieta -->
+                <div class="flex flex-col items-center text-center animate-in animate-in-delay-3">
+                    <img src="img/alanarrieta.jpg" alt="Alan Arrieta" class="w-40 h-40 md:w-52 md:h-52 object-cover rounded-xl border-4 border-purple-600 transform hover:scale-105 transition-transform duration-300">
+                    <h3 class="mt-4 text-2xl font-bold">Alan Arrieta</h3>
+                    <p class="text-gray-400">Invitado especial</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Boletos (con animación de entrada) -->
+    <section id="boletos" class="py-20 bg-black">
+        <div class="container mx-auto px-4 flex flex-col items-center text-center animate-in">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8 text-glow-purple">
+                BOLETOS
+            </h2>
+            <p class="text-xl max-w-2xl text-gray-300 mb-12">
+                Prepárate para vivir una noche inolvidable. Compra tus entradas ahora y asegura tu lugar en el evento más épico del año. ¡No te quedes fuera!
+            </p>
+            <a href="#" class="px-12 py-5 bg-purple-600 hover:bg-purple-700 transition-colors duration-300 rounded-full font-bold text-xl pulse-glow">
+                Comprar Boletos Ahora
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-10">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 SUPERNOVA ORIGENES. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+    <!-- Modal de Votación -->
+    <div id="voting-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="text-3xl font-bold mb-4 text-purple-400">Vota por tu favorito</h3>
+            <p class="mb-6 text-gray-300" id="voting-modal-message">¿Quién crees que ganará este combate?</p>
+            <div class="flex justify-center items-center gap-8 mb-6">
+                <div class="flex flex-col items-center">
+                    <img id="modal-fighter1-img" src="" alt="Peleador 1" class="w-24 h-24 rounded-full border-4 border-pink-500 mb-2">
+                    <span class="text-xl font-bold" id="modal-fighter1-name"></span>
+                    <button class="vote-btn mt-2 px-6 py-2 bg-pink-600 hover:bg-pink-700 transition-colors rounded-full font-bold" data-vote="fighter1">VOTAR</button>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img id="modal-fighter2-img" src="" alt="Peleador 2" class="w-24 h-24 rounded-full border-4 border-sky-500 mb-2">
+                    <span class="text-xl font-bold" id="modal-fighter2-name"></span>
+                    <button class="vote-btn mt-2 px-6 py-2 bg-sky-600 hover:bg-sky-700 transition-colors rounded-full font-bold" data-vote="fighter2">VOTAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmación -->
+    <div id="confirmation-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="text-3xl font-bold mb-4 text-purple-400" id="confirmation-title">¡Voto Registrado!</h3>
+            <p class="text-xl text-gray-300" id="confirmation-message">¡Gracias por participar! Tu voto ha sido contado.</p>
+        </div>
+    </div>
+
+    <!-- Script para las interacciones y animaciones -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoHero = document.getElementById('logo-hero');
+            const fighterHero = document.getElementById('fighter-hero');
+            const fighterNameDisplay = document.getElementById('fighter-name-display');
+            const heroFighterCards = document.querySelectorAll('.hero-fighter-card');
+            
+            // Lógica para las animaciones de entrada al hacer scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 // Porcentaje del elemento que debe estar visible para activar
+            });
+
+            // Observa todos los elementos con la clase .animate-in
+            document.querySelectorAll('.animate-in').forEach(element => {
+                observer.observe(element);
+            });
+
+            // Lógica para el cambio de color en la barra de navegación al hacer scroll
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-black', 'bg-opacity-70', 'backdrop-blur-sm', 'shadow-lg');
+                } else {
+                    navbar.classList.remove('bg-black', 'bg-opacity-70', 'backdrop-blur-sm', 'shadow-lg');
+                }
+            });
+
+            // Lógica para mostrar la imagen y el nombre del peleador en el centro
+            heroFighterCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    const imageUrl = card.getAttribute('data-fighter-image');
+                    const fighterName = card.getAttribute('data-fighter-name');
+                    fighterHero.src = imageUrl;
+                    fighterNameDisplay.textContent = fighterName;
+                    
+                    logoHero.classList.add('opacity-0');
+                    fighterHero.classList.remove('opacity-0');
+                    fighterNameDisplay.classList.add('is-visible');
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    logoHero.classList.remove('opacity-0');
+                    fighterHero.classList.add('opacity-0');
+                    fighterNameDisplay.classList.remove('is-visible');
+                });
+            });
+
+            // Lógica para la sección de pronósticos
+            const forecastCards = document.querySelectorAll('.forecast-card');
+            const votingModal = document.getElementById('voting-modal');
+            const confirmationModal = document.getElementById('confirmation-modal');
+
+            // Función para actualizar los porcentajes y la barra de progreso
+            function updateForecast(card, fighter1Votes, fighter2Votes) {
+                const totalVotes = fighter1Votes + fighter2Votes;
+                const percentLeft = totalVotes > 0 ? (fighter1Votes / totalVotes) * 100 : 50;
+                const percentRight = totalVotes > 0 ? (fighter2Votes / totalVotes) * 100 : 50;
+
+                card.querySelector('.percent-left').textContent = `${Math.round(percentLeft)}%`;
+                card.querySelector('.bar-left').style.width = `${percentLeft}%`;
+                
+                card.querySelector('.percent-right').textContent = `${Math.round(percentRight)}%`;
+                card.querySelector('.bar-right').style.width = `${percentRight}%`;
+                
+                card.querySelector('.total-votes').textContent = totalVotes;
+            }
+            
+            // Función para mostrar un modal
+            function showModal(modal, title, message, isVotingModal = false, fighter1Data = null, fighter2Data = null) {
+                const modalTitle = modal.querySelector('h3');
+                const modalMessage = modal.querySelector('p');
+
+                if (modalTitle) modalTitle.textContent = title;
+                if (modalMessage) modalMessage.textContent = message;
+
+                if (isVotingModal) {
+                    modal.querySelector('#modal-fighter1-name').textContent = fighter1Data.name;
+                    modal.querySelector('#modal-fighter2-name').textContent = fighter2Data.name;
+                    // Asignar imagenes explícitamente por id
+                    const img1 = document.getElementById('modal-fighter1-img');
+                    const img2 = document.getElementById('modal-fighter2-img');
+                    if (img1) {
+                        img1.src = fighter1Data.image;
+                        img1.alt = fighter1Data.name;
+                    }
+                    if (img2) {
+                        img2.src = fighter2Data.image;
+                        img2.alt = fighter2Data.name;
+                    }
+                    // Asignar matchId a los botones de voto
+                    const voteBtn1 = modal.querySelector('.vote-btn[data-vote="fighter1"]');
+                    const voteBtn2 = modal.querySelector('.vote-btn[data-vote="fighter2"]');
+                    if (voteBtn1) voteBtn1.dataset.matchId = fighter1Data.matchId;
+                    if (voteBtn2) voteBtn2.dataset.matchId = fighter2Data.matchId;
+                }
+
+                modal.classList.add('active');
+            }
+
+            // Función para cerrar un modal
+            function closeModal(modal) {
+                modal.classList.remove('active');
+            }
+
+            // Inicializar la votación para cada tarjeta de pronóstico
+            forecastCards.forEach(card => {
+                const matchId = card.getAttribute('data-match-id');
+                const deadline = new Date(card.getAttribute('data-voting-deadline'));
+                
+                // Cargar datos de localStorage o inicializar
+                let data = JSON.parse(localStorage.getItem(matchId)) || { fighter1_votes: 10, fighter2_votes: 10, voted: false };
+                updateForecast(card, data.fighter1_votes, data.fighter2_votes);
+                
+                // Añadir listener para abrir el modal
+                card.addEventListener('click', () => {
+                    const now = new Date();
+                    
+                    if (now > deadline) {
+                        // Votación finalizada
+                        showModal(confirmationModal, 'Votación Finalizada', 'Lo sentimos, la votación para este combate ha finalizado.');
+                    } else if (data.voted) {
+                        // Ya votó
+                        showModal(confirmationModal, '¡Ya has Votado!', 'Tu voto ya ha sido registrado. ¡Gracias por participar!');
+                    } else {
+                        // Votación activa, abrir modal para votar
+                        const fighter1Name = card.querySelector('.fighter-name[data-fighter="fighter1"]').textContent;
+                        const fighter2Name = card.querySelector('.fighter-name[data-fighter="fighter2"]').textContent;
+                        const fighter1Image = card.querySelector('.forecast-fighter-images img.left').src;
+                        const fighter2Image = card.querySelector('.forecast-fighter-images img.right').src;
+                        
+                        const fighter1Data = { name: fighter1Name, image: fighter1Image, matchId: matchId };
+                        const fighter2Data = { name: fighter2Name, image: fighter2Image, matchId: matchId };
+
+                        showModal(votingModal, 'Vota por tu favorito', '¿Quién crees que ganará este combate?', true, fighter1Data, fighter2Data);
+                    }
+                });
+            });
+
+            // Lógica para los botones de votación dentro del modal
+            const voteButtons = document.querySelectorAll('.vote-btn');
+            voteButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const matchId = button.dataset.matchId;
+                    const fighterVote = button.dataset.vote;
+                    
+                    let data = JSON.parse(localStorage.getItem(matchId));
+
+                    if (fighterVote === 'fighter1') {
+                        data.fighter1_votes += 1;
+                    } else {
+                        data.fighter2_votes += 1;
+                    }
+                    data.voted = true;
+                    
+                    localStorage.setItem(matchId, JSON.stringify(data));
+                    
+                    // Encontrar la tarjeta correspondiente y actualizar la UI
+                    const card = document.querySelector(`.forecast-card[data-match-id="${matchId}"]`);
+                    updateForecast(card, data.fighter1_votes, data.fighter2_votes);
+                    
+                    // Cerrar el modal de votación y mostrar el de confirmación
+                    closeModal(votingModal);
+                    showModal(confirmationModal, '¡Voto Registrado!', '¡Gracias por participar! Tu voto ha sido contado.');
+                });
+            });
+            
+            // Lógica para cerrar los modales
+            const closeButtons = document.querySelectorAll('.modal-close-btn');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    closeModal(event.target.closest('.modal-overlay'));
+                });
+            });
+        });
+    </script>
+</body>
+</html>
